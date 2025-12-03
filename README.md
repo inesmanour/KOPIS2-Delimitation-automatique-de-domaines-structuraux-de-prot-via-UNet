@@ -1,4 +1,4 @@
-# KOPIS2-D-limitation-automatique-de-domaines-structuraux-de-prot-ines-via-U-Net-
+#  KOPIS2 Délimitation automatique de domaines structuraux de protéines via U-Net
 
 
 Ce dépôt contient le code du projet **KOPIS2**, encadré par le Pr. Jean-Christophe Gelly (INSERM UMR_S1134 / Université Paris Cité).
