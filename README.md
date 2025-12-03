@@ -100,7 +100,7 @@ Ce répertoire contient :
 ## Arborescence final :
 
 ```
-~/kopis2/
+~/KOPIS2-Delimitation-automatique-de-domaines-structuraux-de-prot-via-UNet/
   README.md
   environment.yml
   .gitignore
