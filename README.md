@@ -96,6 +96,60 @@ Ce répertoire contient :
 	•	les sorties SWORD2 (cartes de contacts, domaines),
 	•	les données prêtes pour l’apprentissage de l’U-Net.
 
+
+## Arborescence final :
+
+```
+~/kopis2/
+  README.md
+  environment.yml
+  .gitignore
+
+  scripts/
+    01_build_astral_table.py
+    02_join_astral_sifts.py
+    03_download_alphafold.py
+    04_run_sword2_batch.sh
+    05_make_unet_data.py
+
+  src/
+    models/
+      unet.py
+    training/
+      train_unet.py
+    utils/
+      io.py
+      sword_parsing.py
+
+  notebooks/
+    00_exploration.ipynb
+    01_visualiser_contact_maps.ipynb
+
+  results/
+    unet/
+
+  kopis_data/
+    astral/
+      astral_raw.fa
+      astral_cleaned.tsv
+    sifts/
+      pdb_chain_uniprot.tsv.gz
+      mapping_pdb_uniprot.tsv
+    alphafold/
+      Q9XXXXX.cif
+      Q8YYYYY.cif
+    sword/
+      Q9XXXXX/
+        contacts.txt
+        contacts_prob.txt
+        domains.txt
+    ml/
+      unet/
+        Q9XXXXX_contacts.npy
+        Q9XXXXX_domain_map.npy
+```
+
+
 ## Installation de l’environnement
 
 ### Exemple avec conda  :
