@@ -8,7 +8,7 @@ L’objectif est de développer une approche d’apprentissage profond (U-Net) p
 
 ---
 
-## 🧠 Objectif du projet
+##  Objectif du projet
 
 - Utiliser des structures 3D (PDB / modèles AlphaFold) pour générer ou récupérer des **cartes de contacts** entre résidus.
 - Faire tourner **SWORD2** afin d’obtenir :
@@ -22,7 +22,7 @@ L’objectif est de développer une approche d’apprentissage profond (U-Net) p
 
 ---
 
-## 📂 Organisation du dépôt
+##  Organisation du dépôt
 
 ### Code
 
