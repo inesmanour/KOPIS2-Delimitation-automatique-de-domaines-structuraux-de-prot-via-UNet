@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -u              # on enlève -e pour ne pas quitter à la 1ère erreur
+set -u              # pas de -e, comme tu voulais
 set -o pipefail
 
 # Dossier où sont les mmCIF AlphaFold
@@ -34,8 +34,9 @@ for cif_path in "${AF_DIR}"/*.cif; do
 
   out_dir="${SWORD_DIR}/${uniprot_id}"
 
-  # 🔴 SI LA PROT A DÉJÀ DES RÉSULTATS, ON SAUTE
-  if [ -f "${out_dir}/SWORD2_summary.json" ]; then
+  # 🔁 Nouveau : si déjà traité (SWORD2_summary.json quelque part), on saute
+  if [ -d "$out_dir" ] && \
+     find "$out_dir" -maxdepth 3 -name "SWORD2_summary.json" -print -quit | grep -q .; then
     echo "[${uniprot_id}] déjà traité (SWORD2_summary.json trouvé), on saute."
     continue
   fi
@@ -55,7 +56,7 @@ for cif_path in "${AF_DIR}"/*.cif; do
   status=$?
 
   if [ $status -ne 0 ]; then
-    echo "[${uniprot_id}] ATTENTION : SWORD2 a renvoyé le code ${status}"
+    echo "[${uniprot_id}] ERREUR : pas de SWORD2_summary.json (code $status)."
   fi
 
 done

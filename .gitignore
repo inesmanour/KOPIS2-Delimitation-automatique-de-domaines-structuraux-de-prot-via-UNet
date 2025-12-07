@@ -43,10 +43,8 @@ Thumbs.db
 # Résultats / modèles
 ############################
 
-# Dossier results complet (tu peux garder des .gitkeep dedans si tu veux)
-results/
-!results/.gitkeep
-!results/**/.gitkeep
+# On ne cache plus results/ pour le montrer complet sur GitHub
+# (si besoin tu pourras ignorer certains sous-dossiers plus tard)
 
 # Fichiers de modèles / checkpoints
 *.pt
@@ -63,24 +61,29 @@ logs/
 # Données KOPIS (gros fichiers)
 ############################
 
-# ASTRAL
-kopis_data/astral/*.fa
-kopis_data/astral/*.fasta
-kopis_data/astral/*.tsv
+# ASTRAL : on montre tout (pas d'ignore spécifique)
+# (si tu veux masquer certains gros fichiers, on pourra affiner plus tard)
+# kopis_data/astral/*
 
-# SIFTS
-kopis_data/sifts/*.tsv
-kopis_data/sifts/*.tsv.gz
+# SIFTS : on montre tout
+# (on enlève l'ignore des .tsv/.tsv.gz)
+# kopis_data/sifts/*.tsv
+# kopis_data/sifts/*.tsv.gz
 
-# AlphaFold (les .cif peuvent être gros et nombreux)
-kopis_data/alphafold/
+# AlphaFold : ignorer tout sauf UN fichier d'exemple
+kopis_data/alphafold/*
+!kopis_data/alphafold/AF-A0A0A0RDR2.cif
 
-# Sorties SWORD2 (plein de fichiers par protéine)
-kopis_data/sword/
+# Sorties SWORD2 : ignorer tout sauf UN dossier d'exemple
+kopis_data/sword/*
+!kopis_data/sword/A0A0A0RDR2/
 
-# Données ML (matrices, graphes, etc.)
-kopis_data/ml/
+# Données ML : on montre tout le dossier ml, y compris les .npy
+# (on garde l'ignore global des .npy mais on le réactive pour ml/)
 *.npy
+!kopis_data/ml/**
+# et on n'ignore pas le dossier ml lui-même
+# (aucune ligne du type "kopis_data/ml/" ici)
 
 ############################
 # Divers
