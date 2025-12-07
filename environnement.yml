@@ -1,0 +1,19 @@
+name: kopis2
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy
+  - pandas
+  - matplotlib
+  - pytorch
+  - torchvision
+  - torchaudio
+  - requests
+  - tqdm
+  - networkx
+  - pip
+  - pip:
+      - biopython

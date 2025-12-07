@@ -1,0 +1,90 @@
+############################
+# Python / projet
+############################
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Packages / build
+*.egg-info/
+dist/
+build/
+
+############################
+# Environnements
+############################
+
+.venv/
+venv/
+env/
+.conda/
+*.env
+
+############################
+# Jupyter
+############################
+
+.ipynb_checkpoints/
+.jupyter/
+
+############################
+# OS / éditeurs
+############################
+
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+############################
+# Résultats / modèles
+############################
+
+# Dossier results complet (tu peux garder des .gitkeep dedans si tu veux)
+results/
+!results/.gitkeep
+!results/**/.gitkeep
+
+# Fichiers de modèles / checkpoints
+*.pt
+*.pth
+*.ckpt
+
+# Logs éventuels
+logs/
+*.log
+*.out
+*.err
+
+############################
+# Données KOPIS (gros fichiers)
+############################
+
+# ASTRAL
+kopis_data/astral/*.fa
+kopis_data/astral/*.fasta
+kopis_data/astral/*.tsv
+
+# SIFTS
+kopis_data/sifts/*.tsv
+kopis_data/sifts/*.tsv.gz
+
+# AlphaFold (les .cif peuvent être gros et nombreux)
+kopis_data/alphafold/
+
+# Sorties SWORD2 (plein de fichiers par protéine)
+kopis_data/sword/
+
+# Données ML (matrices, graphes, etc.)
+kopis_data/ml/
+*.npy
+
+############################
+# Divers
+############################
+
+# Si un jour tu fais un dossier data/ en plus
+data/
