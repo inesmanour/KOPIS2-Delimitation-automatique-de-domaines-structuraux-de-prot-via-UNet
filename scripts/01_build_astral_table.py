@@ -47,7 +47,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--input",
         type=Path,
-        # ICI tu mets le nom réel de ton fichier
+        
         default=Path("kopis_data/astral/astral_raw.fa"),
         help="Fichier FASTA ASTRAL brut",
     )

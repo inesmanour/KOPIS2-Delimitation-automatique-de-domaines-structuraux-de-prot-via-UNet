@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -u              # pas de -e, comme tu voulais
+set -u             
 set -o pipefail
 
 # Dossier où sont les mmCIF AlphaFold
@@ -7,7 +7,7 @@ AF_DIR="kopis_data/alphafold"
 # Dossier de sortie pour SWORD2
 SWORD_DIR="kopis_data/sword"
 
-# Chemin vers SWORD2.py (à adapter si besoin)
+# Chemin vers SWORD2.py 
 SWORD2_SCRIPT="$HOME/SWORD2/SWORD2.py"
 
 mkdir -p "$SWORD_DIR"
@@ -34,7 +34,7 @@ for cif_path in "${AF_DIR}"/*.cif; do
 
   out_dir="${SWORD_DIR}/${uniprot_id}"
 
-  # 🔁 Nouveau : si déjà traité (SWORD2_summary.json quelque part), on saute
+  #   si déjà traité (SWORD2_summary.json quelque part), on saute
   if [ -d "$out_dir" ] && \
      find "$out_dir" -maxdepth 3 -name "SWORD2_summary.json" -print -quit | grep -q .; then
     echo "[${uniprot_id}] déjà traité (SWORD2_summary.json trouvé), on saute."
