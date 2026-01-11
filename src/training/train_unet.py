@@ -13,7 +13,7 @@ Ce script :
   2) Crée (ou recharge) un split train / val / test.
   3) Construit les DataLoader (batch_size=1 car N variable).
   4) Initialise un U-Net 2D.
-  5) Entraîne avec BCEWithLogitsLoss + early stopping sur la val_loss.
+  5) Entraîne avec une combinaison BCEWithLogitsLoss + Dice loss.
   6) Sauvegarde :
        - best_model.pt
        - training_log.csv
@@ -52,6 +52,26 @@ from training.dataset import (            # type: ignore
 # ----------------------------------------------------------------------------- #
 #   Utils : seed, splits, métriques
 # ----------------------------------------------------------------------------- #
+def dice_loss(logits: torch.Tensor, targets: torch.Tensor, eps: float = 1e-6) -> torch.Tensor:
+    """
+    Dice loss sur la carte complète.
+
+    logits  : [B, 1, N, N]
+    targets : [B, 1, N, N] (0/1)
+    """
+    probs = torch.sigmoid(logits)
+    targets = targets.float()
+
+    # On aplati tout sauf le batch
+    probs_flat = probs.view(probs.size(0), -1)
+    targets_flat = targets.view(targets.size(0), -1)
+
+    intersection = (probs_flat * targets_flat).sum(dim=1)
+    union = probs_flat.sum(dim=1) + targets_flat.sum(dim=1)
+
+    dice = (2 * intersection + eps) / (union + eps)
+    return 1.0 - dice.mean()
+
 
 def set_seed(seed: int = 42) -> None:
     random.seed(seed)
@@ -140,7 +160,8 @@ def train_one_epoch(
     model,
     loader,
     optimizer,
-    criterion,
+    criterion_bce,
+    lambda_dice,
     device,
     epoch_idx: int,
     num_epochs: int,
@@ -164,7 +185,12 @@ def train_one_epoch(
 
         optimizer.zero_grad()
         logits = model(X)
-        loss = criterion(logits, Y)
+
+        # BCE + Dice
+        loss_bce = criterion_bce(logits, Y)
+        loss_d   = dice_loss(logits, Y)
+        loss = loss_bce + lambda_dice * loss_d
+
         loss.backward()
         optimizer.step()
 
@@ -190,7 +216,8 @@ def train_one_epoch(
 def evaluate(
     model,
     loader,
-    criterion,
+    criterion_bce,
+    lambda_dice,
     device,
     epoch_idx: int,
     num_epochs: int,
@@ -213,7 +240,10 @@ def evaluate(
         Y = Y.to(device)
 
         logits = model(X)
-        loss = criterion(logits, Y)
+
+        loss_bce = criterion_bce(logits, Y)
+        loss_d   = dice_loss(logits, Y)
+        loss = loss_bce + lambda_dice * loss_d
 
         batch_size = X.size(0)
         running_loss += loss.item() * batch_size
@@ -258,11 +288,10 @@ def main():
     split_root = ML_UNET_ROOT / "splits"
     train_ids, val_ids, test_ids = make_or_load_splits(all_ids, split_root)
     
-    # TEST Sous-échantillon pour debug (200 / 50 / 50) voir si mes mectrcis st goods
+    # TEST Sous-échantillon pour debug 
     train_ids = train_ids[:200]
     val_ids   = val_ids[:50]
     test_ids  = test_ids[:50]
-    ####
     
     print(
         f"Split : train={len(train_ids)}, val={len(val_ids)}, test={len(test_ids)} "
@@ -272,7 +301,6 @@ def main():
     # --- datasets & dataloaders ---
     train_dataset = ContactDomainDataset(train_ids)
     val_dataset = ContactDomainDataset(val_ids)
-    # le test_dataset sera utilisé plus tard, après entraînement
     test_dataset = ContactDomainDataset(test_ids)
 
     train_loader = DataLoader(
@@ -287,7 +315,6 @@ def main():
         shuffle=False,
         num_workers=0,
     )
-    # on prépare quand même, même si on ne l'utilise pas ici
     test_loader = DataLoader(
         test_dataset,
         batch_size=args.batch_size,
@@ -297,7 +324,8 @@ def main():
 
     # --- modèle, loss, optim ---
     model = UNet2D(in_channels=1, out_channels=1, base_channels=32).to(device)
-    criterion = torch.nn.BCEWithLogitsLoss()
+    criterion_bce = torch.nn.BCEWithLogitsLoss()
+    lambda_dice = 0.5  # à tester : 0.5, 1.0, etc.
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     # --- dossiers de sortie ---
@@ -335,7 +363,8 @@ def main():
             model=model,
             loader=train_loader,
             optimizer=optimizer,
-            criterion=criterion,
+            criterion_bce=criterion_bce,
+            lambda_dice=lambda_dice,
             device=device,
             epoch_idx=epoch,
             num_epochs=args.epochs,
@@ -344,7 +373,8 @@ def main():
         val_loss, val_acc, val_f1 = evaluate(
             model=model,
             loader=val_loader,
-            criterion=criterion,
+            criterion_bce=criterion_bce,
+            lambda_dice=lambda_dice,
             device=device,
             epoch_idx=epoch,
             num_epochs=args.epochs,
